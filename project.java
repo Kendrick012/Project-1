@@ -20,3 +20,12 @@ public class monitor {
             System.out.println("Error reading URL file: " + e.getMessage());
         }
     }
+    private static void processURL(String urlStr) {
+        try{
+        }catch{
+            }
+    }
+
+    private static void fetchReferencedImages(String html, URL baseURL) {
+
+    }
