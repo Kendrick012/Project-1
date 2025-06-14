@@ -41,7 +41,49 @@ public class monitor {
                 return;
             }
 
-            
+            //request
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"));
+            writer.write("GET " + path + " HTTP/1.1\r\n");
+            writer.write("Host: " + host + "\r\n");
+            writer.write("Connection: close\r\n\r\n");
+            writer.flush();
+
+            //responce
+            BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            String statusLine = reader.readLine();
+            if (statusLine == null || !statusLine.startsWith("HTTP")) {
+                System.out.println("Status: Invalid HTTP Response");
+                socket.close();
+                return;
+            }
+            int statusCode = Integer.parseInt(statusLine.split(" ")[1]);
+            String statusMsg = statusLine.substring(statusLine.indexOf(" ") + 1);
+            System.out.println("Status: " + statusMsg);
+
+            String line;
+            StringBuilder html = new StringBuilder();
+            String redirectURL = null;
+
+            while ((line = reader.readLine()) != null) {
+                if (statusCode == 301 || statusCode == 302) {
+                    if (line.toLowerCase().startsWith("location:")) {
+                        redirectURL = line.substring(9).trim();
+                    }
+                }
+                html.append(line).append("\n");
+            }
+
+            socket.close();
+            //follow
+            if (redirectURL != null) {
+                System.out.println("Redirected URL: " + redirectURL);
+                processURL(redirectURL);
+            }
+
+            //fetch
+            if (statusCode == 200 && html.toString().contains("<img")) {
+                fetchReferencedImages(html.toString(), url);
+            }
             
         }catch (Exception e) {
             System.out.pritnln("Status: Network Error");
