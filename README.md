@@ -3,7 +3,6 @@
 Names and Ids:
 Kendrick Crespo - 6446063
 Richard Iparraguirre - 6301318
-Leslie Ughulu  - 6244994
 -------------------------------------------------------------------------------------------------------------------
 Language Used:
 Java
